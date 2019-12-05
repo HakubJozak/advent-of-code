@@ -23,7 +23,7 @@ class Computer
   end
 
   Stop = Class.new(RuntimeError)
-  
+
   private
     def execute
       case op = @code[@pointer]
@@ -48,7 +48,7 @@ class Computer
       position = @code[@pointer + 3]
       # puts "CHANGE: code[#{position}] = #{val}"
       @code[position] = val
-    end    
+    end
 
 end
 
