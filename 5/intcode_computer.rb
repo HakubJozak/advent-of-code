@@ -6,7 +6,7 @@ class IntcodeComputer
     @code = program
   end
 
-  def run(input, &block)
+  def run(input = [], &block)
     @pointer = 0
     @input = input
 
@@ -27,7 +27,11 @@ class IntcodeComputer
 
   private
     def execute
-      case op = @code[@pointer]
+      # '%05d' % 100
+      # opcode = @code[@pointer]
+      op = @code[@pointer]
+
+      case op 
       when 1
         # add
         val = value(@pointer + 1) + value(@pointer + 2)
