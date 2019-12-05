@@ -27,22 +27,20 @@ class IntcodeComputer
 
   private
     def execute
-      # '%05d' % 100
+      #  % 100
       # opcode = @code[@pointer]
-      op = @code[@pointer]
+    encoded = '%05d' % @code[@pointer]
+    operation = encoded[-2..-1].to_i
+    modes     = encoded[1..-2]
 
-      case op 
+      case operation
       when 1
         # add
-        val = value(@pointer + 1) + value(@pointer + 2)
-        position = @code[@pointer + 3]
-        @code[position] = val
+        write modes, 2, read(modes, 0) + read(modes, 1)
         @pointer += 4
       when 2
         # multiply
-        val = value(@pointer + 1) * value(@pointer + 2)
-        position = @code[@pointer + 3]
-        @code[position] = val
+        write modes, 2, read(modes, 0) * read(modes, 1)
         @pointer += 4
       when 3
         # input
@@ -56,21 +54,30 @@ class IntcodeComputer
       when 99
         raise Stop
       else
-        raise "Invalid operation: #{ op }"
+        raise "Invalid operation: #{ operation }"
       end
-
-
     end
 
-    def value(position)
-      @code[@code[position]]
+    def write(modes, i, value)
+      mode = modes[i]
+      raise 'Invalid write mode' unless mode == '0'
+      @code[@code[ @pointer + 1 + i ]] = value
     end
 
-    def change(val)
+    def read(modes, i)
+      mode = modes[i]
 
-      # puts "CHANGE: code[#{position}] = #{val}"
-
+      if mode == '0'
+        # position moden
+        @code[@code[ @pointer + 1 + i ]]
+      elsif mode == '1'
+        # immediate mode
+        @code[ @pointer + 1 + i ]
+      else
+        raise "Invalid read mode #{ mode }"
+      end
     end
+
 
 end
 
