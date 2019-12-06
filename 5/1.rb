@@ -3,7 +3,7 @@ require_relative 'test_helper'
 
 
 # identity
-# IntcodeComputer.new( [ 3,0,4,0,99 ]).run([33]) 
+# IntcodeComputer.new( [ 3,0,4,0,99 ]).run([33])
 
 
 assert_computation [ 1002,4,3,4,33 ], [ 1002,4,3,4,99 ]

@@ -1,22 +1,25 @@
 class IntcodeComputer
 
-  attr_reader :code
+  attr_reader :code, :output
 
   def initialize(program)
     @code = program
   end
 
   def run(input = [], &block)
+    @output  = []
     @pointer = 0
-    @input = input
+    @input   = input
 
     loop do
       execute &block
       break if @pointer >= @code.size
     rescue Stop
       # puts "STOPPED AT #{@pointer}"
-      return
+      break
     end
+
+    self
   end
 
   def result
@@ -30,39 +33,68 @@ class IntcodeComputer
       #  % 100
       # opcode = @code[@pointer]
     encoded   = '%05d' % @code[@pointer]
-    operation = encoded[-2..-1].to_i
-    @modes    = encoded[0..-3].reverse
+    @operation = encoded[-2..-1].to_i
+    @modes     = encoded[0..-3].reverse
 
-      case operation
-      when 1
-        # add
-        write 2, read(0) + read(1)
-        @pointer += 4
-      when 2
-        # multiply
-        write 2, read(0) * read(1)
-        @pointer += 4
-      when 3
-        # input
-        write 0, @input.shift
-        @pointer += 2
-      when 4
-        # output
-        yield read(0)
-        @pointer += 2
+    debug state
+    debug "--------------------------------------------------"
 
-      when 5        
-    # Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-    # Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-    # Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-    # Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-
-
-      when 99
-        raise Stop
+    case @operation
+    when 1
+      # add
+      write 2, read(0) + read(1)
+      @pointer += 4
+    when 2
+      # multiply
+      write 2, read(0) * read(1)
+      @pointer += 4
+    when 3
+      # input
+      write 0, @input.shift
+      @pointer += 2
+    when 4
+      # output
+      value = read(0)
+      puts "Output: #{ value }"
+      @output << value
+      @pointer += 2
+    when 5
+      # jump-if-true
+      if read(0).zero?
+        @pointer += 3
       else
-        raise "Invalid operation: #{ operation } - #{@code.inspect}"
+        @pointer = read(1)
       end
+    when 6
+      # jump-if-false
+      if read(0).zero?        
+        @pointer = read(1)
+      else
+        @pointer += 3
+      end
+    when 7
+      # less-than
+      if read(0) < read(1)
+        write(2, 1)
+      else
+        write(2, 0)          
+      end
+
+      @pointer += 4
+    when 8
+      # equals
+      if read(0) == read(1)
+        write(2, 1)
+      else
+        write(2, 0)          
+      end        
+
+      @pointer += 4
+    when 99
+      raise Stop
+    else
+      raise "Invalid operation: #{ @operation } - #{@code.inspect}"
+    end
     end
 
     def write(i, value)
@@ -85,5 +117,21 @@ class IntcodeComputer
       end
     end
 
+    def debug(msg)
+      puts "DEBUG: #{msg}"
+    end
+
+    def state
+      # info = "pointer: #{ @pointer }, operation: #{ @operation }"
+      formatted = @code.map.with_index do |c,i|
+        if i == @pointer
+          "* %3d" % c
+        else
+          "%3d" % c 
+        end
+      end.join(" | ")
+
+      formatted
+    end
 
 end
