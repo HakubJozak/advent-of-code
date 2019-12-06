@@ -47,8 +47,4 @@ Finally, the program will output a diagnostic code and immediately halt. This fi
 
 After providing 1 to the only input instruction and passing all the tests, what diagnostic code does the program produce?
 
-To begin, get your puzzle input.
 
-Answer:
-
-You can also [Shareon Twitter Mastodon] this puzzle.

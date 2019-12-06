@@ -31,25 +31,33 @@ class IntcodeComputer
       # opcode = @code[@pointer]
     encoded   = '%05d' % @code[@pointer]
     operation = encoded[-2..-1].to_i
-    modes     = encoded[0..-3].reverse
+    @modes    = encoded[0..-3].reverse
 
       case operation
       when 1
         # add
-        write modes, 2, read(modes,0) + read(modes,1)
+        write 2, read(0) + read(1)
         @pointer += 4
       when 2
         # multiply
-        write modes, 2, read(modes,0) * read(modes,1)
+        write 2, read(0) * read(1)
         @pointer += 4
       when 3
         # input
-        write modes, 0, @input.shift
+        write 0, @input.shift
         @pointer += 2
       when 4
         # output
-        yield read(modes, 0)
+        yield read(0)
         @pointer += 2
+
+      when 5        
+    # Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+    # Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+    # Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+    # Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+
+
       when 99
         raise Stop
       else
@@ -57,14 +65,14 @@ class IntcodeComputer
       end
     end
 
-    def write(modes, i, value)
-      mode = modes[i]
+    def write(i, value)
+      mode = @modes[i]
       raise "Invalid write mode #{mode}" unless mode == '0'
       @code[@code[ @pointer + 1 + i ]] = value
     end
 
-    def read(modes, i)
-      mode = modes[i]
+    def read(i)
+      mode = @modes[i]
 
       if mode == '0'
         # position mode
@@ -79,6 +87,3 @@ class IntcodeComputer
 
 
 end
-
-
-
