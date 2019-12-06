@@ -21,8 +21,8 @@ require_relative 'test_helper'
 # assert_computation [ 3,3,1108,-1,8,3,4,3,99 ], [ 3948 ], [ 0 ]
 # assert_computation [ 3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9 ], [ 0 ], [0]
 
+
 assert_computation [ 3,3,1105,-1,9,1101,0,0,12,4,12,99, 1 ], [0], [0]
-|
 
 #      3,3,1108,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
 #     3,3,1107,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
@@ -31,6 +31,6 @@ assert_computation [ 3,3,1105,-1,9,1101,0,0,12,4,12,99, 1 ], [0], [0]
 #     3,3,1105,-1,9,1101,0,0,12,4,12,99,1 (using immediate mode)
 
 
-# diagnostics = File.new('input.txt').read.split(',').map(&:to_i)
-# IntcodeComputer.new( diagnostics ).run([ 5 ])
+diagnostics = File.new('input.txt').read.split(',').map(&:to_i)
+IntcodeComputer.new( diagnostics ).run([ 5 ])
 

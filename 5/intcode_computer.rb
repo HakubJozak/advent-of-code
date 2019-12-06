@@ -1,9 +1,11 @@
 class IntcodeComputer
 
   attr_reader :code, :output
+  attr_accessor :debugging
 
   def initialize(program)
     @code = program
+    @debugging = false
   end
 
   def run(input = [], &block)
@@ -118,6 +120,7 @@ class IntcodeComputer
     end
 
     def debug(msg)
+      return unless @debugging
       puts "DEBUG: #{msg}"
     end
 
